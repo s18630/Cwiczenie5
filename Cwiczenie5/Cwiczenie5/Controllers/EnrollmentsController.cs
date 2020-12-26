@@ -58,6 +58,8 @@ namespace Cwiczenie5.Controllers
 
 
 
+
+
                 com.CommandText = "Select IdEnrollment from Enrollment where Semester=1 and IdStudy= (select IdStudy from Studies where Name Like @name) order by StartDate DESC ";
                 com.Transaction = transacion;
 
@@ -69,81 +71,96 @@ namespace Cwiczenie5.Controllers
                     IdEnrollment = (int)dr["IdEnrollment"];
                     dr.Close();
 
-                }else if (!dr.Read())
+                }
+                else if (!dr.Read())
                 {
                     dr.Close();
                     com.CommandText = "select IdEnrollment from Enrollment where IdEnrollment =(select max(IdEnrollment) from Enrollment )";
                     dr = com.ExecuteReader();
                     if (dr.Read())
-                    {int IdEnroll = (int)dr["IdEnrollment"];
+                    {
+                        int IdEnroll = (int)dr["IdEnrollment"];
                         IdEnrollment = IdEnroll + 1;
 
 
                     }
-                        
-                        dr.Close();
+
+                    dr.Close();
 
                     com.CommandText = "INSERT INTO Enrollment(IdEnrollment, Semester, IdStudy, StartDate) VALUES (@IdEnrollment , 1, @IdStudy,  convert(datetime, @StartDate));";
 
                     com.Parameters.AddWithValue("IdStudy", IdStudy);
                     DateTime thisDay = DateTime.Today;
                     com.Parameters.AddWithValue("StartDate", thisDay);
-                  com.Parameters.AddWithValue("IdEnrollment", IdEnrollment);
+                    com.Parameters.AddWithValue("IdEnrollment", IdEnrollment);
 
-                    
+
                     com.ExecuteNonQuery();
                     transacion.Commit();
-                    
+
                 }
 
-
-
-            }
-
-
-        
-
-
-
-
-
-
-
-                //zapisujemy teraz studenta 
-
-
-
-
-
-
-
-
-                // jeśli studia istnieją najnowszy wpis w tabeli enrollments zgodny ze studiami i wartościa semestru=1
-                //zapisujemy studenta na semestr pierwszy
-                // jesli wpisu nie ma to dodajemy go do bazy i ustawiamy start na aktualną dat e 
-
-
-
-
-
-
-                //sprawdzamy index studenta czy unikalny
                 //jesli nei zgłaszamy błąd 
 
                 //jeśli tak dodajemy studenta
 
-           
 
-                var response = new EnrollStudentResponse();
-                    response.IndexNumber = student.IndexNumber;
-                    //  response.Semester = ;
-                    //  response.StartDate =/
+                com.CommandText = "Select IndexNumber from Student where IndexNumber =@IndexNumber";
+                com.Parameters.AddWithValue("IndexNumber", request.IndexNumber);
+                com.Transaction = transacion;
+
+                dr = com.ExecuteReader();
 
 
-                    return Ok(response);
+                if (dr.Read())
+                {
+                    dr.Close();
+                    transacion.Rollback();
+                    return BadRequest("Student o tym ID już istnieje");
                 }
-             }
-            
+                else if (!dr.Read())
+                {
+                    dr.Close();
+                    com.CommandText = "INSERT INTO Student(IndexNumber, FirstName, LastName, BirthDate, IdEnrollment) VALUES(@IndexNumber, @FirstName , @LastName, convert(datetime,@BirthDate), @IdEnrollment)";
+                    com.Parameters.AddWithValue("FirstName", student.FirstName);
+                    com.Parameters.AddWithValue("LastName", student.LastName);
+                    com.Parameters.AddWithValue("BirthDate", student.BirthDate);
+                    com.Parameters.AddWithValue("IdEnrollment", IdEnrollment);
+
+                    com.ExecuteNonQuery();
+
+
+                }
+
+
+
+
+
+
+
+
+
+                
+                transacion.Commit();
+
+            }
+
+
+
+
+
+
+
+            var response = new EnrollStudentResponse();
+            response.IndexNumber = student.IndexNumber;
+            //  response.Semester = ;
+            //  response.StartDate =/
+
+
+            return Ok(response);
+        }
+    }
+}
         
 
 
@@ -170,5 +187,5 @@ namespace Cwiczenie5.Controllers
 
 
 
-    }
+    
 
