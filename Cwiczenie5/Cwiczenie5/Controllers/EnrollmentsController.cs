@@ -35,18 +35,25 @@ namespace Cwiczenie5.Controllers
             using (SqlConnection con = new SqlConnection(ConString))
             using (SqlCommand com = new SqlCommand())
             {
-                com.Connection = con; 
+                com.Connection = con;
+
 
                 com.CommandText = " select IdStudy from Studies where Name Like @name ";
 
                 com.Parameters.AddWithValue("name", request.Studies);
                 con.Open();
+                var transacion = con.BeginTransaction();
+                com.Transaction = transacion;
+                using (SqlDataReader dr = com.ExecuteReader()) { 
 
-                using (SqlDataReader dr=com.ExecuteReader())
-                {
+
+
                     if (!dr.Read())
                     {
+                        dr.Close();
+                        transacion.Rollback();
                         return BadRequest("nie znaleziono studiów");
+
 
                     }
                var response = new EnrollStudentResponse();
@@ -55,8 +62,8 @@ namespace Cwiczenie5.Controllers
             //  response.StartDate =/
 
 
-            return Ok(response);
-            } }
+            return Ok(response);}
+             }
             
         }
 
