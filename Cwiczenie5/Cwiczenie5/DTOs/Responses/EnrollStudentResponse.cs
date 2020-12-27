@@ -12,5 +12,7 @@ namespace Cwiczenie5.DTOs.Responses
         public string Semester { get; set; }
 
         public string StartDate { get; set; }
+
+        public string Studies { get; set; }
     }
 }

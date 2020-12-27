@@ -28,6 +28,8 @@ namespace Cwiczenie5.Controllers
             student.LastName = request.LastName;
             student.BirthDate = request.BirthDate;
 
+            var response = new EnrollStudentResponse();
+
 
 
 
@@ -42,6 +44,7 @@ namespace Cwiczenie5.Controllers
 
                 con.Open();
                 var transacion = con.BeginTransaction();
+                int IdEnrollment = 1;
                 try {
                     
 
@@ -66,7 +69,7 @@ namespace Cwiczenie5.Controllers
                     com.Transaction = transacion;
 
                     dr = com.ExecuteReader();
-                    int IdEnrollment = 1;
+             //     int IdEnrollment = 1;
 
                     if (dr.Read())
                     {
@@ -136,12 +139,27 @@ namespace Cwiczenie5.Controllers
 
                     transacion.Commit();
 
-                }catch(Exception ex)
+
+                   
+                    com.CommandText = "SELECT StartDate from Enrollment where IdEnrollment=@IdEnrollment";
+              
+                    dr = com.ExecuteReader();
+                    if (dr.Read())
+                    {
+                        response.StartDate = dr["StartDate"].ToString();
+
+                    }
+
+                    
+
+
+                }
+                catch(Exception ex)
                 {
                     transacion.Rollback();
                     return BadRequest();
                 }
-                
+
 
             }
 
@@ -152,9 +170,13 @@ namespace Cwiczenie5.Controllers
 
 
 
-            var response = new EnrollStudentResponse();
+            
             response.IndexNumber = student.IndexNumber;
             response.Semester = "1";
+            response.Studies = request.Studies;
+
+
+           
             //   response.StartDate =
 
 
@@ -163,6 +185,42 @@ namespace Cwiczenie5.Controllers
             // return Created("http://localhost:63047/api/enrollments", response);
             return Created(ConString ,response);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
         
