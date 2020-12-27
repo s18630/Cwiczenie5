@@ -147,17 +147,21 @@ namespace Cwiczenie5.Controllers
 
 
 
-
+            //jak student został wpisady to kod 201
+            //w ciele żadania zwracamu przypisany do studenta obiekt enrollment reprezentujacy semesyt ma z
 
 
 
             var response = new EnrollStudentResponse();
             response.IndexNumber = student.IndexNumber;
             response.Semester = "1";
-       //   response.StartDate =
+            //   response.StartDate =
 
 
-            return Ok(response);
+            //    return Ok(response);
+            //kod 201 w jaki sposób zwracać
+            // return Created("http://localhost:63047/api/enrollments", response);
+            return Created(ConString ,response);
         }
     }
 }
