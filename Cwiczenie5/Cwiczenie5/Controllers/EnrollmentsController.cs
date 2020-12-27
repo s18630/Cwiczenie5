@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cwiczenie5.Controllers
 {
-    [Route("api/enrollments")]
+ // [Route("api/enrollments")]
     [ApiController]
     public class EnrollmentsController : ControllerBase
     {
@@ -19,6 +19,7 @@ namespace Cwiczenie5.Controllers
 
 
         [HttpPost]
+        [Route("api/enrollments")]
         public IActionResult EnrollStudent(EnrollStudentRequest request)
         {
 
@@ -184,6 +185,22 @@ namespace Cwiczenie5.Controllers
             //kod 201 w jaki sposób zwracać
             // return Created("http://localhost:63047/api/enrollments", response);
             return Created(ConString ,response);
+        }
+
+
+
+
+
+
+        [HttpPost("api/enrollments/promotions")]
+        
+        public IActionResult PromoteStudents(PromoteStudentRequest request)
+        {
+            
+
+            return Ok(request);
+
+
         }
 
 
