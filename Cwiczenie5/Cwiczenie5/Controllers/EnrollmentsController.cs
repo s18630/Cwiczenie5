@@ -196,9 +196,26 @@ namespace Cwiczenie5.Controllers
         
         public IActionResult PromoteStudents(PromoteStudentRequest request)
         {
-            
 
-            return Ok(request);
+            using (SqlConnection con = new SqlConnection(ConString))
+            using (SqlCommand com = new SqlCommand())
+            {
+                com.Connection = con;
+                con.Open();
+                com.CommandText =
+                   "EXEc s18630.PromoteStudents @Studies , @Semester";
+
+                com.CommandType = System.Data.CommandType.StoredProcedure;
+
+                com.Parameters.AddWithValue("Semester", request.Semester);
+                com.Parameters.AddWithValue("Studies ", request.Studies);
+
+
+
+            }
+
+
+                return Ok(request);
 
 
         }
