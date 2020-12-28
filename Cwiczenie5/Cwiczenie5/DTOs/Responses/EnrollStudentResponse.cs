@@ -14,5 +14,26 @@ namespace Cwiczenie5.DTOs.Responses
         public string StartDate { get; set; }
 
         public string Studies { get; set; }
+
+        private string ConString;
+
+
+
+
+        public string getConnectionString()
+        {
+            return ConString;
+        }
+
+        public void setConString(string ConString)
+        {
+            this.ConString = ConString;
+
+        }
+
+
+
     }
+
+   
 }
