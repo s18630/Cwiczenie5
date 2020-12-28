@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -150,6 +151,7 @@ namespace Cwiczenie5.Controllers
                         response.StartDate = dr["StartDate"].ToString();
 
                     }
+                    dr.Close();
 
                     
 
@@ -157,6 +159,7 @@ namespace Cwiczenie5.Controllers
                 }
                 catch(Exception ex)
                 {
+                    
                     transacion.Rollback();
                     return BadRequest();
                 }
@@ -201,22 +204,23 @@ namespace Cwiczenie5.Controllers
             using (SqlCommand com = new SqlCommand())
             {
                 com.Connection = con;
+
                 con.Open();
-                com.CommandText =
-                   "EXEc s18630.PromoteStudents @Studies , @Semester";
+                com.CommandText = "PromoteStudents";
+                //     "EXEc s18630.PromoteStudents @Studies , @Semester";
 
                 com.CommandType = System.Data.CommandType.StoredProcedure;
-
-                com.Parameters.AddWithValue("Semester", request.Semester);
-                com.Parameters.AddWithValue("Studies ", request.Studies);
-
+                com.Parameters.AddWithValue("@Studies", SqlDbType.NVarChar).Value = request.Studies;
+                com.Parameters.AddWithValue("@Semester", SqlDbType.Int).Value = request.Semester;
 
 
-            }
+                //      com.Parameters.AddWithValue("Semester", request.Semester);
+                //     com.Parameters.AddWithValue("Studies ", request.Studies);
+                com.ExecuteNonQuery();
 
 
                 return Ok(request);
-
+            }
 
         }
 
