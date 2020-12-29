@@ -11,7 +11,7 @@ namespace Cwiczenie5.Services
     {
 
         EnrollStudentResponse EnrollStudent(EnrollStudentRequest request);
-        void PromoteStudents(int semester, int studies);
+        PromoteStudentsResponse PromoteStudents(PromoteStudentsRequest request);
 
     }
 }

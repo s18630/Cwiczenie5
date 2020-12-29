@@ -13,11 +13,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cwiczenie5.Controllers
 {
- // [Route("api/enrollments")]
+    // [Route("api/enrollments")]
     [ApiController]
     public class EnrollmentsController : ControllerBase
     {
-     //   private const string ConString = "Data Source=db-mssql;Initial Catalog=2019SBD;Integrated Security=True";
+        //   private const string ConString = "Data Source=db-mssql;Initial Catalog=2019SBD;Integrated Security=True";
         private IStudentsDbService _service;
 
         public EnrollmentsController(IStudentsDbService service)
@@ -215,45 +215,58 @@ namespace Cwiczenie5.Controllers
 
                 return BadRequest();
             }
-         
+
         }
-    }
 
 
 
 
 
 
-    /*    [HttpPost("api/enrollments/promotions")]
-        
-        public IActionResult PromoteStudents(PromoteStudentRequest request)
+
+        [HttpPost("api/enrollments/promotions")]
+
+        public IActionResult PromoteStudents(PromoteStudentsRequest request)
         {
 
-            using (SqlConnection con = new SqlConnection(ConString))
-            using (SqlCommand com = new SqlCommand())
-            {
-                com.Connection = con;
+            /*   using (SqlConnection con = new SqlConnection(ConString))
+               using (SqlCommand com = new SqlCommand())
+               {
+                   com.Connection = con;
 
-                con.Open();
-                com.CommandText = "PromoteStudents";
-                //     "EXEc s18630.PromoteStudents @Studies , @Semester";
+                   con.Open();
+                   com.CommandText = "PromoteStudents";
+                   //     "EXEc s18630.PromoteStudents @Studies , @Semester";
 
-                com.CommandType = System.Data.CommandType.StoredProcedure;
-                com.Parameters.AddWithValue("@Studies", SqlDbType.NVarChar).Value = request.Studies;
-                com.Parameters.AddWithValue("@Semester", SqlDbType.Int).Value = request.Semester;
-
-
-                //      com.Parameters.AddWithValue("Semester", request.Semester);
-                //     com.Parameters.AddWithValue("Studies ", request.Studies);
-                com.ExecuteNonQuery();
+                   com.CommandType = System.Data.CommandType.StoredProcedure;
+                   com.Parameters.AddWithValue("@Studies", SqlDbType.NVarChar).Value = request.Studies;
+                   com.Parameters.AddWithValue("@Semester", SqlDbType.Int).Value = request.Semester;
 
 
-                return Ok(request);
+                   //      com.Parameters.AddWithValue("Semester", request.Semester);
+                   //     com.Parameters.AddWithValue("Studies ", request.Studies);
+                   com.ExecuteNonQuery();
+            */
+
+          //  try
+          //  {
+               PromoteStudentsResponse response= _service.PromoteStudents(request);
+                string ConString = response.getConnectionString();
+                return Created(ConString, response);
+
+          //  }
+      //      catch(Exception ex)
+      //      {
+      //          return BadRequest();
+      //      }
+
+
+
             }
 
         }
 
-    */
+
 
 
 

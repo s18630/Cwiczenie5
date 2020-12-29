@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Cwiczenie5.DTOs.Requests
 {
-    public class PromoteStudentRequest
+    public class PromoteStudentsRequest
     {
         [Required]
         public string Studies { get; set; }
         [Required]
-        public string Semester { get; set; }
+        public int Semester { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Cwiczenie5.DTOs.Responses;
 using Cwiczenie5.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -94,11 +95,6 @@ namespace Cwiczenie5.Services
 
                     }
 
-                    //jesli nei zgłaszamy błąd 
-
-                    //jeśli tak dodajemy studenta
-
-
                     com.CommandText = "Select IndexNumber from Student where IndexNumber =@IndexNumber";
                     com.Parameters.AddWithValue("IndexNumber", request.IndexNumber);
                     com.Transaction = transacion;
@@ -110,7 +106,6 @@ namespace Cwiczenie5.Services
                     {
                         dr.Close();
                         transacion.Rollback();
-                        //    return BadRequest("Student o tym ID już istnieje");
                         throw new Exception("Student o tym ID już istnieje");
                     }
                     else if (!dr.Read())
@@ -140,43 +135,21 @@ namespace Cwiczenie5.Services
 
 
 
-
                 }
                 catch (Exception ex)
                 {
-
                     transacion.Rollback();
-                    //     return BadRequest();
                     throw new Exception("Wystąpił błąd");
                 }
 
 
             }
 
-
-
-            //jak student został wpisady to kod 201
-            //w ciele żadania zwracamu przypisany do studenta obiekt enrollment reprezentujacy semesyt ma z
-
-
-
-
             response.IndexNumber = student.IndexNumber;
             response.Semester = "1";
             response.Studies = request.Studies;
             response.setConString(ConString);
-
-
-
-            //   response.StartDate =
-
-
-            //    return Ok(response);
-            //kod 201 w jaki sposób zwracać
-            // return Created("http://localhost:63047/api/enrollments", response);
-
-
-
+           
 
             return  response;
         }
@@ -189,9 +162,101 @@ namespace Cwiczenie5.Services
       
 
 
-        public void PromoteStudents(int semester, int studies)
+        public PromoteStudentsResponse PromoteStudents(PromoteStudentsRequest request)
         {
-            throw new NotImplementedException();
+            PromoteStudentsResponse response = new PromoteStudentsResponse();
+
+
+            using (SqlConnection con = new SqlConnection(ConString))
+            using (SqlCommand com = new SqlCommand())
+            {
+                com.Connection = con;
+
+                con.Open();
+                com.CommandText = "PromoteStudents";
+
+                com.CommandType = System.Data.CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@Studies", SqlDbType.NVarChar).Value = request.Studies;
+                com.Parameters.AddWithValue("@Semester", SqlDbType.Int).Value = request.Semester;
+
+                com.ExecuteNonQuery();
+                
+
+
+                con.Close();
+            }
+
+
+            using (SqlConnection con = new SqlConnection(ConString))
+            using (SqlCommand com = new SqlCommand())
+            {
+                com.Connection = con;
+
+                con.Open();
+
+                com.CommandText = " Select * from Enrollment where Semester =@NewSemester and IdStudy = (select IdStudy from Studies where Name =@Studies) " +
+                    "and StartDate = (select max(StartDate) from Enrollment where Semester =@NewSemester and IdStudy = (select IdStudy from Studies where Name =@Studies))";
+
+                com.Parameters.AddWithValue("NewSemester", request.Semester + 1);
+                com.Parameters.AddWithValue("Studies", request.Studies);
+               
+
+
+              
+                SqlDataReader dr = com.ExecuteReader();
+               
+
+                if (dr.Read())
+                {
+                    response.IdEnrollment = (int)dr["IdEnrollment"];
+                    response.Semester = (int)dr["Semester"];
+                    response.idStudy = (int)dr["IdStudy"];
+                    response.StartDate = dr["StartDate"].ToString();
+
+
+                    response.Studies = request.Studies;
+
+
+                }
+                else
+                {
+                    dr.Close();
+                    throw new Exception();
+                }
+
+                dr.Close();
+
+
+
+
+                con.Close();
+            }
+            
+
+
+                response.setConString(ConString);
+
+                //          Select* from Enrollment where Semester = 9 and IdStudy = 3 and StartDate = (select max(StartDate) from Enrollment where Semester = 9 and IdStudy = 3);
+
+                //wyszukaj dodany właśńie semestr i zwróc obiekty
+
+                return response;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
     }
-}
+
