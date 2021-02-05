@@ -42,7 +42,6 @@ namespace Cwiczenie5.Controllers
                 string ConString = response.getConnectionString();
                 return Created(ConString, response);
             }
-
             catch (Exception ex)
             {
 
