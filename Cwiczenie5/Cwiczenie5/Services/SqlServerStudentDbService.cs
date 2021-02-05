@@ -239,7 +239,7 @@ namespace Cwiczenie5.Services
             
 
 
-            using (SqlConnection con = new SqlConnection(ConString))
+         /*   using (SqlConnection con = new SqlConnection(ConString))
             using (SqlCommand com = new SqlCommand())
             {
                 com.Connection = con;
@@ -279,7 +279,7 @@ namespace Cwiczenie5.Services
                 dr.Close();
 
             }
-            
+            */
 
                 response.setConString(ConString);
                 return response;
