@@ -186,7 +186,7 @@ namespace Cwiczenie5.Services
 
 
 
-         public PromoteStudentsResponse PromoteStudents(PromoteStudentsRequest request)
+        public PromoteStudentsResponse PromoteStudents(PromoteStudentsRequest request)
         {
             PromoteStudentsResponse response = new PromoteStudentsResponse();
 
@@ -232,31 +232,24 @@ namespace Cwiczenie5.Services
 
                     com.ExecuteNonQuery();
                 }
-          
 
-                }     
-                
+
             
 
 
-         /*   using (SqlConnection con = new SqlConnection(ConString))
             using (SqlCommand com = new SqlCommand())
             {
                 com.Connection = con;
 
-                con.Open();
-
                 com.CommandText = " Select * from Enrollment where Semester =@NewSemester and IdStudy = (select IdStudy from Studies where Name =@Studies) " +
-                    "and StartDate = (select max(StartDate) from Enrollment where Semester =@NewSemester and IdStudy = (select IdStudy from Studies where Name =@Studies))";
+                 "and StartDate = (select max(StartDate) from Enrollment where Semester =@NewSemester and IdStudy = (select IdStudy from Studies where Name =@Studies))";
 
                 com.Parameters.AddWithValue("NewSemester", request.Semester + 1);
                 com.Parameters.AddWithValue("Studies", request.Studies);
-               
 
 
-              
                 SqlDataReader dr = com.ExecuteReader();
-               
+
 
                 if (dr.Read())
                 {
@@ -270,19 +263,25 @@ namespace Cwiczenie5.Services
 
 
                 }
-                else
-                {
-                    dr.Close();
-                //    throw new Exception();
-                }
 
-                dr.Close();
 
-            }
-            */
 
-                response.setConString(ConString);
-                return response;
+
+            } 
+           
+
+        } 
+            
+            response.setConString(ConString);
+            return response;
+
+
+
+
+             
+
+           
+
             }
 
 
