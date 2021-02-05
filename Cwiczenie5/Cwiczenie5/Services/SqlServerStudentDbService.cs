@@ -157,6 +157,10 @@ namespace Cwiczenie5.Services
 
 
 
+
+
+
+
         
 
       
@@ -172,7 +176,36 @@ namespace Cwiczenie5.Services
             {
                 com.Connection = con;
 
+
+                com.CommandText = "select* from Enrollment " +
+                    "inner join Studies on Studies.IdStudy = Enrollment.IdStudy" +
+                    " where Enrollment.Semester =@semester and Studies.Name =@studies ";
+
                 con.Open();
+
+                com.Parameters.AddWithValue("studies", request.Studies);
+                com.Parameters.AddWithValue("semester", request.Semester);
+
+                var reader=com.ExecuteReader();
+
+                if (!reader.Read())
+                {
+                    throw new Exception();
+                }
+
+            }
+
+
+             
+
+            using (SqlConnection con = new SqlConnection(ConString))
+            using (SqlCommand com = new SqlCommand())
+            {
+                com.Connection = con;
+
+
+                con.Open();
+
                 com.CommandText = "PromoteStudents";
 
                 com.CommandType = System.Data.CommandType.StoredProcedure;
@@ -181,9 +214,6 @@ namespace Cwiczenie5.Services
 
                 com.ExecuteNonQuery();
                 
-
-
-                con.Close();
             }
 
 
@@ -221,25 +251,15 @@ namespace Cwiczenie5.Services
                 else
                 {
                     dr.Close();
-                    throw new Exception();
+                //    throw new Exception();
                 }
 
                 dr.Close();
 
-
-
-
-                con.Close();
             }
             
 
-
                 response.setConString(ConString);
-
-                //          Select* from Enrollment where Semester = 9 and IdStudy = 3 and StartDate = (select max(StartDate) from Enrollment where Semester = 9 and IdStudy = 3);
-
-                //wyszukaj dodany właśńie semestr i zwróc obiekty
-
                 return response;
             }
 
