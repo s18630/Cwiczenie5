@@ -38,8 +38,7 @@ namespace Cwiczenie5.Services
 
                     var transacion = con.BeginTransaction();
                     com.Transaction = transacion;
-                  //  try
-                //    {
+  
                         SqlDataReader dr = com.ExecuteReader();
 
                         if (!dr.Read())
@@ -52,7 +51,7 @@ namespace Cwiczenie5.Services
                         response.IdStudies = (int)dr["IdStudy"];
                         dr.Close();
 
-                        //////////////////////////////CZY index
+    
                         com.CommandText = "Select IndexNumber from Student where IndexNumber =@IndexNumber";
                         com.Parameters.AddWithValue("IndexNumber", request.IndexNumber);
                         com.Transaction = transacion;
@@ -68,13 +67,9 @@ namespace Cwiczenie5.Services
 
 
 
-                        //jest ok dotąd   }
-
-
-                        //////////////////////////////
 
                         com.CommandText = "Select IdEnrollment from Enrollment where Semester=1 and IdStudy= (select IdStudy from Studies where Name Like @name) order by StartDate DESC ";
-                        //    com.Transaction = transacion;
+
 
                         dr = com.ExecuteReader();
 
@@ -98,7 +93,7 @@ namespace Cwiczenie5.Services
                             }
 
                             dr.Close();
-                            ///////////////
+
 
                             using (SqlCommand com1 = new SqlCommand())
                             {
@@ -115,7 +110,7 @@ namespace Cwiczenie5.Services
 
 
                                 com1.ExecuteNonQuery();
-                         //       transacion.Commit();
+ 
 
 
                             }
@@ -134,16 +129,15 @@ namespace Cwiczenie5.Services
                         transacion.Commit();
 
 
-                    /*    com.CommandText = "SELECT StartDate from Enrollment where IdEnrollment=@IdEnrollment";
+                        com.CommandText = "SELECT StartDate from Enrollment where IdEnrollment=@IdEnrollment";
 
                         dr = com.ExecuteReader();
                         if (dr.Read())
                         {
                             response.StartDate = dr["StartDate"].ToString();
                         }
-                        dr.Close();*/
 
-                //robi dobrze ale zwraca żle
+
 
                 response.IndexNumber = student.IndexNumber;
                 response.Semester = "1";
@@ -153,339 +147,14 @@ namespace Cwiczenie5.Services
 
                 return response;
 
-                ////////////////////
-                //    }
-                //   catch (Exception ex)
-                //   {
-                //      transacion.Rollback();
-                //       throw new Exception();
-
-                //   }
-
             }
          
-          
-            
-
+       
                 
-/*
-            response.IndexNumber = student.IndexNumber;
-            response.Semester = "1";
-            response.Studies = request.Studies;
-            response.setConString(ConString);
 
-
-            return response;*/
         }
 
 
-
-
-        /// <summary>
-        /// ///////////////////////////////////////////////
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-
-
-        /*     public EnrollStudentResponse EnrollStudent(EnrollStudentRequest request)
-             {
-                 var student = new Student();
-                 student.IndexNumber = request.IndexNumber;
-                 student.FirstName = request.FirstName;
-                 student.LastName = request.LastName;
-                 student.BirthDate = request.BirthDate;
-
-                 var response = new EnrollStudentResponse();
-
-               //  try
-               //  {
-
-                     using (SqlConnection con = new SqlConnection(ConString))
-                     using (SqlCommand com = new SqlCommand())
-                     {
-                         com.Connection = con;
-
-                         com.CommandText = " select IdStudy from Studies where Name Like @name ";
-                         com.Parameters.AddWithValue("name", request.Studies);
-
-                         con.Open();
-
-                         var transacion = con.BeginTransaction();
-                         com.Transaction = transacion;
-
-                         SqlDataReader dr = com.ExecuteReader();
-
-                         if (!dr.Read())
-                         {
-                             dr.Close();
-                             transacion.Rollback();
-                             throw new Exception("Studia nie istnieją");
-                         }
-
-                         response.IdStudies = (int)dr["IdStudy"];
-                         dr.Close();
-
-                         com.CommandText = "Select IdEnrollment from Enrollment where Semester=1 and IdStudy= (select IdStudy from Studies where Name Like @name) order by StartDate DESC ";
-                     //    com.Transaction = transacion;
-
-                         dr = com.ExecuteReader();
-
-                         if (dr.Read())
-                         {
-                                  response.IdEnrollemnt = (int)dr["IdEnrollment"];
-                                  dr.Close();
-
-                         }
-                         else if (!dr.Read())
-                         {
-                                 dr.Close();
-
-                                 com.CommandText = "select IdEnrollment from Enrollment where IdEnrollment =(select max(IdEnrollment) from Enrollment )";
-                                 dr = com.ExecuteReader();
-
-                                 if (dr.Read())
-                                  {
-                                        int IdEnroll = (int)dr["IdEnrollment"];
-                                        response.IdEnrollemnt = IdEnroll + 1;
-                                  }
-
-                                 dr.Close();
-
-                                com.CommandText = "INSERT INTO Enrollment(IdEnrollment, Semester, IdStudy, StartDate) VALUES (@IdEnrollment , 1, @IdStudy,  convert(datetime, @StartDate));";
-
-                                com.Parameters.AddWithValue("IdStudy", response.IdStudies);
-                                DateTime thisDay = DateTime.Today;
-                                com.Parameters.AddWithValue("StartDate", thisDay);
-                                com.Parameters.AddWithValue("IdEnrollment", response.IdEnrollemnt);
-
-
-                                com.ExecuteNonQuery();
-                                transacion.Commit();
-
-                         }
-                     }//jest ok
-
-
-
-
-                     using (SqlConnection con = new SqlConnection(ConString))
-                     using (SqlCommand com = new SqlCommand())
-                     {
-                         com.Connection = con;
-
-                         com.CommandText = "Select IndexNumber from Student where IndexNumber =@IndexNumber";
-                         com.Parameters.AddWithValue("IndexNumber", request.IndexNumber);
-
-                         con.Open();
-
-                         var transacion = con.BeginTransaction();
-                         com.Transaction = transacion;
-
-                         SqlDataReader dr = com.ExecuteReader();
-
-
-                         if (dr.Read())
-                         {
-                             dr.Close();
-                             transacion.Rollback();
-                             throw new Exception("Student o tym ID już istnieje");
-                         }
-
-                         else if (!dr.Read())
-                         {
-                             dr.Close();
-                             com.CommandText = "INSERT INTO Student(IndexNumber, FirstName, LastName, BirthDate, IdEnrollment) VALUES(@IndexNumber, @FirstName , @LastName, convert(datetime,@BirthDate), @IdEnrollment)";
-                             com.Parameters.AddWithValue("FirstName", student.FirstName);
-                             com.Parameters.AddWithValue("LastName", student.LastName);
-                             com.Parameters.AddWithValue("BirthDate", student.BirthDate);
-                             com.Parameters.AddWithValue("IdEnrollment", response.IdEnrollemnt);
-
-                             com.ExecuteNonQuery();
-                         }
-
-                         transacion.Commit();
-
-
-
-                         com.CommandText = "SELECT StartDate from Enrollment where IdEnrollment=@IdEnrollment";
-
-                         dr = com.ExecuteReader();
-                         if (dr.Read())
-                         {
-                             response.StartDate = dr["StartDate"].ToString();
-                         }
-                         dr.Close();
-
-
-                ////////////////////
-                     }
-            /*     }
-                 catch (Exception ex)
-                 {
-                     //     transacion.Rollback();
-                     throw new Exception("Wystąpił błąd");
-                 }
-
-
-
-
-                 response.IndexNumber = student.IndexNumber;
-                 response.Semester = "1";
-                 response.Studies = request.Studies;
-                 response.setConString(ConString);
-
-
-                 return response;
-             }
-         *\
-        /////////////////////////////////////////////////////
-
-             /*     public EnrollStudentResponse EnrollStudent(EnrollStudentRequest request)
-                  {
-                      var student = new Student();
-                      student.IndexNumber = request.IndexNumber;
-                      student.FirstName = request.FirstName;
-                      student.LastName = request.LastName;
-                      student.BirthDate = request.BirthDate;
-
-                      var response = new EnrollStudentResponse();
-
-
-                      using (SqlConnection con = new SqlConnection(ConString))
-                      using (SqlCommand com = new SqlCommand())
-                      {
-                          com.Connection = con;
-
-                          com.CommandText = " select IdStudy from Studies where Name Like @name ";
-                          com.Parameters.AddWithValue("name", request.Studies);
-
-                          con.Open();
-                          var transacion = con.BeginTransaction();
-                          int IdEnrollment = 1;
-                          try
-                          {
-
-
-                              com.Transaction = transacion;
-
-                              SqlDataReader dr = com.ExecuteReader();
-                              if (!dr.Read())
-                              {
-                                  dr.Close();
-                                  transacion.Rollback();
-                                  //   return BadRequest("Studia nie istnieją");
-                                  throw new Exception("Studia nie istnieją");
-                              }
-
-                              int IdStudy = (int)dr["IdStudy"];
-                              dr.Close();
-
-                              com.CommandText = "Select IdEnrollment from Enrollment where Semester=1 and IdStudy= (select IdStudy from Studies where Name Like @name) order by StartDate DESC ";
-                              com.Transaction = transacion;
-
-                              dr = com.ExecuteReader();
-                              //     int IdEnrollment = 1;
-
-                              if (dr.Read())
-                              {
-                                  IdEnrollment = (int)dr["IdEnrollment"];
-                                  dr.Close();
-
-                              }
-                              else if (!dr.Read())
-                              {
-                                  dr.Close();
-                                  com.CommandText = "select IdEnrollment from Enrollment where IdEnrollment =(select max(IdEnrollment) from Enrollment )";
-                                  dr = com.ExecuteReader();
-                                  if (dr.Read())
-                                  {
-                                      int IdEnroll = (int)dr["IdEnrollment"];
-                                      IdEnrollment = IdEnroll + 1;
-                                  }
-
-                                  dr.Close();
-
-                                  com.CommandText = "INSERT INTO Enrollment(IdEnrollment, Semester, IdStudy, StartDate) VALUES (@IdEnrollment , 1, @IdStudy,  convert(datetime, @StartDate));";
-
-                                  com.Parameters.AddWithValue("IdStudy", IdStudy);
-                                  DateTime thisDay = DateTime.Today;
-                                  com.Parameters.AddWithValue("StartDate", thisDay);
-                                  com.Parameters.AddWithValue("IdEnrollment", IdEnrollment);
-
-
-                                  com.ExecuteNonQuery();
-                                  transacion.Commit();
-
-                              }
-
-                              com.CommandText = "Select IndexNumber from Student where IndexNumber =@IndexNumber";
-                              com.Parameters.AddWithValue("IndexNumber", request.IndexNumber);
-                              com.Transaction = transacion;
-
-                              dr = com.ExecuteReader();
-
-
-                              if (dr.Read())
-                              {
-                                  dr.Close();
-                                  transacion.Rollback();
-                                  throw new Exception("Student o tym ID już istnieje");
-                              }
-                              else if (!dr.Read())
-                              {
-                                  dr.Close();
-                                  com.CommandText = "INSERT INTO Student(IndexNumber, FirstName, LastName, BirthDate, IdEnrollment) VALUES(@IndexNumber, @FirstName , @LastName, convert(datetime,@BirthDate), @IdEnrollment)";
-                                  com.Parameters.AddWithValue("FirstName", student.FirstName);
-                                  com.Parameters.AddWithValue("LastName", student.LastName);
-                                  com.Parameters.AddWithValue("BirthDate", student.BirthDate);
-                                  com.Parameters.AddWithValue("IdEnrollment", IdEnrollment);
-
-                                  com.ExecuteNonQuery();
-                              }
-
-                              transacion.Commit();
-
-
-
-                              com.CommandText = "SELECT StartDate from Enrollment where IdEnrollment=@IdEnrollment";
-
-                              dr = com.ExecuteReader();
-                              if (dr.Read())
-                              {
-                                  response.StartDate = dr["StartDate"].ToString();
-                              }
-                              dr.Close();
-
-
-
-                          }
-                          catch (Exception ex)
-                          {
-                              transacion.Rollback();
-                              throw new Exception("Wystąpił błąd");
-                          }
-
-
-                      }
-
-                      response.IndexNumber = student.IndexNumber;
-                      response.Semester = "1";
-                      response.Studies = request.Studies;
-                      response.setConString(ConString);
-
-
-                      return  response;
-                  }
-
-
-
-
-
-
-
-
-            */
 
 
 
