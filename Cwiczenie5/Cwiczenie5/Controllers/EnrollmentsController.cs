@@ -61,17 +61,17 @@ namespace Cwiczenie5.Controllers
         public IActionResult PromoteStudents(PromoteStudentsRequest request)
         {
 
-           try
-            {
+      //     try
+     //       {
                PromoteStudentsResponse response= _service.PromoteStudents(request);
                 string ConString = response.getConnectionString();
                 return Created(ConString, response);
 
-            }
-            catch(Exception ex)
-            {
-                return NotFound();
-            }
+    //        }
+    //        catch(Exception ex)
+   //         {
+   //             return NotFound();
+    //        }
 
 
         }
